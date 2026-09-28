@@ -1,0 +1,10 @@
+node_modules/
+__pycache__/
+.playwright/
+test-results/
+private-materials/
+*.zip
+*.pdf
+*.docx
+*.pptx
+.env*
