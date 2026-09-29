@@ -1,10 +1,11 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {LESSONS,SOURCES,ISLANDS} from '../src/content.js';
+import {LESSONS,TOPICS,ISLANDS} from '../src/content.js';
 import {newSave,parseSave,validateSave,loadSave,persist,runState,seedFor,record,evidenceLabel,random,setCase,setResult,sameSet,parseSet,pythonCases,webSpec,DAY} from '../src/core.js';
-test('unique, source-mapped content; pending courses contain no pretend lessons',()=>{
+test('unique activities have topic notes; pending islands contain no pretend lessons',()=>{
  assert.equal(new Set(LESSONS.map(l=>l.id)).size,10);
- for(const l of LESSONS){assert.ok(SOURCES[l.source]);assert.ok(ISLANDS.some(i=>i.id===l.island&&!i.pending));assert.ok(l.hints.length);}
+ for(const l of LESSONS){assert.ok(TOPICS[l.island]);assert.ok(ISLANDS.some(i=>i.id===l.island&&!i.pending));assert.ok(l.hints.length);}
+ assert.ok(ISLANDS.every(i=>i.subject));
  assert.ok(!LESSONS.some(l=>['digital','computing'].includes(l.island)));
 });
 test('deterministic random stream and stable, distinct mode seeds',()=>{

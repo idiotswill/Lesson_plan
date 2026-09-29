@@ -1,4 +1,4 @@
-import {ISLANDS,LESSONS,SOURCES,lessonById,islandLessons} from './content.js';
+import {ISLANDS,LESSONS,TOPICS,lessonById,islandLessons} from './content.js';
 import {loadSave,persist,parseSave,newSave,runState,seedFor,record,evidenceLabel,setCase,parseSet,setText,sameSet,expression,pythonCases,webSpec} from './core.js';
 import {GuidedLesson,guideProgress} from './teaching.js';
 import {World} from './world.js';
@@ -42,18 +42,18 @@ applyCalm();
 $('calm-button').onclick=()=>{state.calm=!state.calm;applyCalm();save();};
 $('sound-button').onclick=()=>{sound=!sound;$('sound-button').textContent=sound?'Sound on':'Sound off';$('sound-button').setAttribute('aria-pressed',String(sound));if(sound)chime();};
 function drawDestinations(){
-  $('destinations').innerHTML=ISLANDS.map(i=>`<button class="destination ${i.pending?'pending':''} ${i.id===selectedIsland?'active':''}" data-island="${i.id}" aria-pressed="${i.id===selectedIsland}"><strong>${escape(i.name)}</strong><small>${escape(i.course)}${i.pending?' · pending':''}</small></button>`).join('');
+  $('destinations').innerHTML=ISLANDS.map(i=>`<button class="destination ${i.pending?'pending':''} ${i.id===selectedIsland?'active':''}" data-island="${i.id}" aria-pressed="${i.id===selectedIsland}"><strong>${escape(i.name)}</strong><small>${escape(i.subject)}${i.pending?' · pending':''}</small></button>`).join('');
   $('destinations').querySelectorAll('button').forEach(b=>b.onclick=()=>world.sail(b.dataset.island));
 }
 function selectIsland(id){
   selectedIsland=id;const island=ISLANDS.find(i=>i.id===id);if(!island)return;
   const lessons=islandLessons(id),done=lessons.filter(l=>state.completed.includes(l.id)).length;
-  $('island-course').textContent=island.course;$('island-name').textContent=island.name;$('island-symbol').textContent=island.symbol;
+  $('island-subject').textContent=island.subject;$('island-name').textContent=island.name;$('island-symbol').textContent=island.symbol;
   document.querySelector('.island-panel').style.setProperty('--accent',island.colour);
   $('island-intro').textContent=island.intro;
   $('task-list').innerHTML=lessons.map((l,i)=>`<button class="task-button ${state.completed.includes(l.id)?'done':''}" data-lesson="${l.id}"><span class="task-number">${state.completed.includes(l.id)?'✓':i+1}</span>${escape(l.title)}<span aria-hidden="true">↗</span></button>`).join('');
   $('task-list').querySelectorAll('button').forEach(b=>b.onclick=()=>openLesson(b.dataset.lesson));
-  $('island-reward').innerHTML=island.pending?'<p class="reward">Reserved for reviewed course materials. Not a playable module yet.</p>':`<p class="reward">${done===lessons.length?'✧ Rekindled:':'◇ Discover:'} ${escape(island.reward)} · ${done}/${lessons.length} experiments</p>`;
+  $('island-reward').innerHTML=island.pending?'<p class="reward">A future chapter. Not a playable module yet.</p>':`<p class="reward">${done===lessons.length?'✧ Rekindled:':'◇ Discover:'} ${escape(island.reward)} · ${done}/${lessons.length} experiments</p>`;
   const lanterns=ISLANDS.filter(i=>!i.pending&&islandLessons(i.id).every(l=>state.completed.includes(l.id))).length;
   $('lantern-count').textContent=lanterns+' / 3';$('ending-button').hidden=lanterns<3;
   drawDestinations();
@@ -74,14 +74,14 @@ function setBusy(value){busy=value;['run-button','fresh-button','adventure-mode'
 function stopSession(){session++;runner.stop();setBusy(false);}
 function openLesson(id,newMode='adventure'){
   stopSession();guide.close();document.querySelector('.mission-layout').hidden=false;lesson=lessonById(id);if(!lesson)return;mode=newMode;chosen=new Set();
-  const src=SOURCES[lesson.source];
-  $('mission-course').textContent=ISLANDS.find(i=>i.id===lesson.island).course;
+  const topic=TOPICS[lesson.island];
+  $('mission-subject').textContent=ISLANDS.find(i=>i.id===lesson.island).subject;
   $('mission-title').textContent=lesson.title;$('mission-term').textContent=lesson.term;
   $('adventure-mode').setAttribute('aria-pressed',String(mode==='adventure'));$('check-mode').setAttribute('aria-pressed',String(mode==='check'));
-  $('teach-box').hidden=mode==='check';$('source-details').open=false;
+  $('teach-box').hidden=mode==='check';$('topic-details').open=false;
   $('mission-story').textContent=mode==='adventure'?lesson.story:'A fresh problem without the scene. Solve from a blank or minimal starting point. Hints remain available, but using one records this as supported practice.';
   $('mission-learn').textContent=lesson.learn;$('mission-example').textContent=lesson.example;
-  $('source-detail').textContent=src.title+' — '+src.location+' '+src.note;
+  $('topic-detail').textContent=topic.title+' — '+topic.focus+' '+topic.note;
   $('hint-text').textContent=runState(state,id,mode).hints?'Support was used on this variation. Use New variation for a fresh check.':'';
   $('solution-text').hidden=true;$('solution-text').textContent='';
   $('evidence-label').textContent=evidenceLabel(state,id);resetResult();
@@ -143,7 +143,7 @@ function updatePreview(){
     frame.srcdoc=previewDocument(html,css).replace('<html','<html data-preview-token="'+token+'"');
   });
 }
-function successMessage(){return mode==='check'?(runState(state,lesson.id,mode).supported||runState(state,lesson.id,mode).hints||runState(state,lesson.id,mode).attempts>1?'Correct. This was supported or corrected practice; use New variation for a fresh independent check.':'Fresh check passed without in-app help. This is evidence for this skill, not proof of course mastery.'):'It works. A little more of the world remembers what it was supposed to be. '+(runState(state,lesson.id,mode).supported?'This was practice after guided teaching. Try a fresh check later to see what you can do independently.':'');}
+function successMessage(){return mode==='check'?(runState(state,lesson.id,mode).supported||runState(state,lesson.id,mode).hints||runState(state,lesson.id,mode).attempts>1?'Correct. This was supported or corrected practice; use New variation for a fresh independent check.':'Fresh check passed without in-app help. This is evidence for this skill, not proof of mastery.'):'It works. A little more of the world remembers what it was supposed to be. '+(runState(state,lesson.id,mode).supported?'This was practice after guided teaching. Try a fresh check later to see what you can do independently.':'');}
 function finish(success,details=''){
   record(state,lesson.id,mode,success);save();
   setFeedback(success?successMessage():details,' '+(success?'success':'failure'));
@@ -211,7 +211,7 @@ $('download-work').onclick=()=>{
   else download(previewDocument($('html-editor').value,$('css-editor').value),lesson.id+'.html','text/html');
 };
 function renderJournal(){
-  $('journal-content').innerHTML=ISLANDS.map(i=>`<section class="journal-course"><h3>${escape(i.course)}</h3>${i.pending?'<p class="muted">Teaching materials pending; no learning claims yet.</p>':islandLessons(i.id).map(l=>`<div class="journal-entry"><div><strong>${escape(l.term)}</strong><small>${escape(evidenceLabel(state,l.id))}</small></div><button data-check="${l.id}">Fresh check ↗</button></div>`).join('')}</section>`).join('');
+  $('journal-content').innerHTML=ISLANDS.map(i=>`<section class="journal-subject"><h3>${escape(i.subject)}</h3>${i.pending?'<p class="muted">A future chapter; no activities available yet.</p>':islandLessons(i.id).map(l=>`<div class="journal-entry"><div><strong>${escape(l.term)}</strong><small>${escape(evidenceLabel(state,l.id))}</small></div><button data-check="${l.id}">Fresh check ↗</button></div>`).join('')}</section>`).join('');
   $('journal-content').querySelectorAll('[data-check]').forEach(b=>b.onclick=()=>{$('journal').close();const r=runState(state,b.dataset.check,'check');r.variant++;r.attempts=0;r.hints=0;r.supported=false;delete state.drafts[b.dataset.check+':check'];openLesson(b.dataset.check,'check');});
 }
 $('journal-button').onclick=()=>{renderJournal();$('journal').showModal();};

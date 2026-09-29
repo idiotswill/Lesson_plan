@@ -1,59 +1,45 @@
-# Development notes
+# Development
 
 ## Structure
 
-The app deliberately has no production bundler or npm dependencies. Static relative URLs support localhost and repository-subpath hosting.
+The application uses static HTML, CSS and native JavaScript modules. `server.py` serves files locally; it does not execute submitted code.
 
-- `index.html`, `styles.css`: accessible DOM controls, dialogs, responsive panels and original interface design.
-- `src/world.js`: canvas artwork, sailing, island selection and the lighthouse state. An equivalent DOM destination list avoids making canvas interaction mandatory.
-- `src/content.js`: stable lesson/island IDs, story, teaching copy, hints and source metadata.
-- `src/core.js`: seeded generators, pure expected-answer logic, save validation and evidence labels.
-- `src/app.js`: the application controller, editor drafts, modes, hints, export/import and feedback.
-- `src/python.js`: worker lifetime, cancellation and timeouts.
-- `src/python-worker.js`: pinned Pyodide boot plus an actual Python harness; a new worker per submission and fresh namespace per input case.
-- `src/web-workshop.js`: bounded preview sanitisation, iframe policy and DOM/computed-style checks.
-- `server.py`: Python-standard-library static localhost server. It does not execute the learner's code, accept uploads or serve arbitrary repository/private files.
+- `src/content.js`: stable activity/island IDs, subject descriptions, story, explanations and hints.
+- `src/core.js`: deterministic problems, checking helpers, saves and learning-evidence rules.
+- `src/world.js`: procedural map, boat movement, islands and visual rewards.
+- `src/app.js`: interface orchestration, workspaces, settings, journal and exports.
+- `src/teaching-content.js` and `src/teaching.js`: teaching steps, demonstrations, guided actions and feedback.
+- `src/python.js` and `src/python-worker.js`: bounded runtime lifecycle and Python execution.
+- `src/web-workshop.js`: sanitised HTML/CSS previews and rendered checks.
 
-## Extending a course
+## Adding activities
 
-1. Review the real source section, examples and expected assessment difficulty. Update `CURRICULUM.md`; do not fabricate a citation from a filename.
-2. Add a stable lesson ID and explicit prerequisites. Keep old IDs when content is reorganised so saves remain meaningful.
-3. Implement the mechanic, original examples, conceptual feedback, edge cases and a materially different independent check.
-4. Add unit tests with independently derived expected answers and a browser acceptance path.
-5. Test both valid alternate answers and plausible misconceptions. A demonstration working once is not a reliable checker.
-6. Re-evaluate learning evidence; do not grant mastery on story completion.
+Establish the skill, prerequisites and expected difficulty before inventing a challenge. Record implemented coverage and limitations in `CURRICULUM.md`. Introduce every required notation or API before asking for independent work.
 
-The existing three activity kinds are not a universal course engine. A new subject such as Digitalni sustavi needs a genuine circuit model and theory practice; C or Linux needs a separate execution environment. New course labels alone are not completed integrations.
+Keep old activity IDs stable so existing saves remain meaningful. Add explanations, a worked sequence, smaller guided actions, original examples, useful wrong-answer feedback and a genuinely different independent check. Test plausible misconceptions and alternative valid solutions, not only one expected answer.
+
+New topics may need new mechanics. Logic circuits require a real circuit model and theory practice; C and Linux require appropriate execution environments. A renamed destination is not an integration.
+
+Use newly written explanations, examples and assets or content with verified reuse permission. Preserve required third-party licence and attribution notices. Do not publish private documents, credentials or personal records; `.gitignore` excludes common document/archive formats and `private-materials/`.
 
 ## Saves
 
-Schema version 1 stores a seed, completed lesson IDs, up to 1,000 evidence records, per-mode variants/hint and attempt counts, editor drafts, boat position, motion preference and ending state. Imports copy only known fields and enforce size/type bounds. Future versions need explicit migration and tests; never silently drop older progress or claim compatible imports without checking.
+Schema version 1 stores stable IDs, a seed, up to 1,000 evidence records, per-mode variants and assistance counts, editor drafts, teaching checkpoints, boat position, motion preference and ending state. Imports accept only known fields and enforce type/size bounds.
 
-localStorage is origin-specific, not account-based or cloud-synchronised. Errors must remain visible. In the corrupt-save path, autosave is blocked until explicit reset/import to preserve the original stored value.
+Future schema changes require explicit migration and tests. Never silently drop older progress. Browser storage is origin-specific, not account-based or cloud-synchronised. Changing ports or hosts needs export/import. A corrupt stored save blocks autosave until explicit reset/import, preserving the original value.
 
-## Security boundaries
+## Execution boundaries
 
-Python is user-controlled executable code, not text to eval in the main page. The worker cannot directly manipulate the DOM, but Pyodide is not a hardened malicious-code sandbox. Imports and the JS bridge are not comprehensively isolated. Memory exhaustion and hostile Python remain outside the guarantees. Do not add secrets, privileged APIs or private documents to this runtime. Five-second termination and line budgets primarily prevent accidental hangs.
+Python runs in a worker, not in the main page or local HTTP server. A fresh worker, timeouts, a Stop button, capped output and a line-event budget primarily limit accidental hangs. This is not a hardened sandbox for hostile code: imports, the JavaScript bridge and memory exhaustion are not comprehensively isolated. Keep secrets and privileged APIs out of the runtime.
 
-Web previews allow a bounded set of structural HTML elements and attributes, no scripts or form submission, no remote assets, and a restrictive CSP inside a sandboxed iframe. Closing-style sequences in CSS are escaped before serialisation. `allow-same-origin` enables inspection; `allow-scripts` must NOT be added alongside it. Generated web exports use the bounded preview document.
+HTML previews allow a bounded set of structural elements and attributes. Scripts, forms and remote assets are disabled. A restrictive content security policy applies in a sandboxed iframe. `allow-same-origin` enables checking; do not add `allow-scripts` alongside it. Closing-style sequences are escaped and exports use the bounded preview document.
 
-Never commit source packs or personal records. `.gitignore` includes common course-document/archive formats and `private-materials/`. Do not make those files public merely to simplify development.
+## Teaching contract
 
-## Near-term work
+The challenge is hidden while guidance is open. Skip and replay are explicit choices. Guidance never writes story completion or skill evidence. Opening guidance marks the current attempt as supported, including in check mode; a fresh variation resets support for that attempt.
 
-1. Run the live Pyodide acceptance test on an unrestricted computer; then add pinned CI browser testing.
-2. Playtest the first chapter with the learner. The present island-to-workbench flow is a first implementation, not proof of sustained fun.
-3. Increase set-case diversity and improve independent checks beyond parameter changes.
-4. Review remaining teaching materials and authentic assessment patterns privately, before expanding content.
-5. Add Digitalni sustavi and Uvod u računarstvo after their sources are available.
-6. Improve keyboard editor indentation/outdent, larger-screen typography options and screen-reader descriptions of mathematical diagrams.
+Worked frames are fixed demonstrations, not a pretend interpreter. The Python tests compare them with actual CPython execution. Supported warm-ups are not competence results. When teaching fails, improve the explanation and practice sequence before adding more islands.
 
-Keep the project grounded in two observable outcomes: a game the learner wants to return to, and problems the learner can later solve without the game's help.
+## Next work
 
-## v0.2 guided-teaching contract
-
-`src/teaching-content.js` holds original, source-labelled step sequences. Each step introduces an idea or demonstrates a method, and may contain a bounded guided action. `src/teaching.js` renders member cards, worked execution frames, live HTML previews and corrective explanations. Worked frames are fixed demonstrations, not a pretend Python interpreter; `tests/python_grader_test.py` checks them against actual CPython.
-
-The challenge is hidden while the guide is open. Skip/replay are explicit choices. Guidance never writes to `completed` or `evidence`; only an actual challenge submission does. Opening guidance marks that attempt `supported`, including in check mode. A fresh variation resets support for that attempt. The optional `guides` save field is validated by known lesson IDs and retains checkpoints without changing the v1 save key or requiring a reset.
-
-Future additions should introduce every required notation/API before asking for independent work, include a worked sequence plus a smaller guided task, provide useful wrong-answer feedback, and keep course content distinct from enrichment. First assess whether the learner can now start and explain the method; do not respond to a teaching failure by adding more islands.
+Run live Pyodide/browser-storage checks on an unrestricted machine, strengthen independent checks and set diversity, playtest the novice flow, and improve accessibility. Larger topic expansions should follow those checks rather than replace them.

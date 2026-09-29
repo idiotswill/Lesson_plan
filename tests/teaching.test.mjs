@@ -4,10 +4,10 @@ import {GUIDES} from '../src/teaching-content.js';
 import {guideProgress,checkGuideAnswer} from '../src/teaching.js';
 import {LESSONS} from '../src/content.js';
 import {newSave,validateSave,record,runState,evidenceLabel,setResult} from '../src/core.js';
-test('every playable task has a source-mapped teaching path, worked steps, and guided actions',()=>{
+test('every playable task has a skill-focused teaching path, worked steps, and guided actions',()=>{
  assert.deepEqual(Object.keys(GUIDES).sort(),LESSONS.map(l=>l.id).sort());
  for(const g of Object.values(GUIDES)){
-  assert.ok(g.source.length>20);assert.ok(g.steps.length>=5);assert.ok(g.steps.at(-1).recap);
+  assert.ok(g.focus.length>20);assert.ok(g.steps.length>=5);assert.ok(g.steps.at(-1).recap);
   assert.ok(g.steps.filter(s=>s.question).length>=2);
   for(const s of g.steps){assert.ok(s.title&&s.text);if(s.question){assert.ok(s.question.why&&s.question.wrong);}}
  }
@@ -29,12 +29,13 @@ test('set demonstrations follow membership decisions, not geometric guessing',()
   assert.deepEqual(mini.answer,setResult([4,5,7,8],[4,5],[5,7],op));
  }
 });
-test('reference exercise from LA-01 p.5 agrees with checker for all four operations',()=>{
- const U=[1,2,3,4,5,6,7,8,9,10,11],A=[1,2,4,6,8,11],B=[1,3,5,7,8,9];
- assert.deepEqual(setResult(U,A,B,'union'),[1,2,3,4,5,6,7,8,9,11]);
- assert.deepEqual(setResult(U,A,B,'intersection'),[1,8]);
- assert.deepEqual(setResult(U,A,B,'difference'),[2,4,6,11]);
- assert.deepEqual(setResult(U,A,B,'complement'),[3,5,7,9,10]);
+test('independent irregular-set fixture agrees with all four operations',()=>{
+ const U=[-9,-4,0,2,5,11,18],A=[-9,0,5,18],B=[0,2,18];
+ assert.deepEqual(setResult(U,A,B,'union'),[-9,0,2,5,18]);
+ assert.deepEqual(setResult(U,A,B,'intersection'),[0,18]);
+ assert.deepEqual(setResult(U,A,B,'difference'),[-9,5]);
+ assert.deepEqual(setResult(U,A,B,'complement'),[-4,2,11]);
+ assert.deepEqual(setResult(U,B,A,'difference'),[2]);
 });
 test('old saves gain optional teaching checkpoints without deleting evidence or drafts',()=>{
  const s=newSave();delete s.guides;s.drafts['py-loop:adventure']='charge = 0';s.completed=['set-union'];

@@ -233,7 +233,7 @@ with sync_playwright() as p:
     page.locator('[data-close="settings"]').click()
     print('PASS: chapter ending, save export, bad-import protection, reset and restore')
     page.locator('[data-island="digital"]').click();assert page.locator('#task-list button').count()==0
-    print('PASS: missing course material remains visibly pending')
+    print('PASS: future chapters remain visibly pending')
     page.set_viewport_size({'width':390,'height':844});page.screenshot(path=str(OUT/'mobile.png'),full_page=True)
     assert page.evaluate('document.documentElement.scrollWidth <= innerWidth+1')
     assert not errors,errors
