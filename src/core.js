@@ -6,7 +6,7 @@ export function random(seed) {
   return () => { a += 0x6D2B79F5; let t = a; t = Math.imul(t ^ t >>> 15, t | 1); t ^= t + Math.imul(t ^ t >>> 7, t | 61); return ((t ^ t >>> 14) >>> 0) / 4294967296; };
 }
 export function newSave() {
-  return { version:1, seed:Math.floor(Math.random()*1e9), completed:[], evidence:[], drafts:{}, runs:{}, position:{x:.47,y:.66}, calm:false, ending:false };
+  return { version:1, seed:Math.floor(Math.random()*1e9), completed:[], evidence:[], drafts:{}, runs:{}, guides:{}, position:{x:.47,y:.66}, calm:false, ending:false };
 }
 /** Treat imported JSON as untrusted. Copy only known fields; never merge prototypes. */
 export function validateSave(raw) {
@@ -23,7 +23,13 @@ export function validateSave(raw) {
   for (const l of LESSONS) for (const mode of ['adventure','check']) {
     const key=l.id+':'+mode, d=raw.drafts?.[key], r=raw.runs?.[key];
     if (typeof d==='string' && d.length<=21000) out.drafts[key]=d;
-    if (r && Number.isInteger(r.variant) && r.variant>=0 && r.variant<1000000 && Number.isInteger(r.hints) && r.hints>=0 && r.hints<=3 && Number.isInteger(r.attempts) && r.attempts>=0 && r.attempts<1000000) out.runs[key]={variant:r.variant,hints:r.hints,attempts:r.attempts};
+    if (r && Number.isInteger(r.variant) && r.variant>=0 && r.variant<1000000 && Number.isInteger(r.hints) && r.hints>=0 && r.hints<=3 && Number.isInteger(r.attempts) && r.attempts>=0 && r.attempts<1000000) out.runs[key]={variant:r.variant,hints:r.hints,attempts:r.attempts,supported:r.supported===true};
+  }
+  // Optional v0.2 teaching checkpoints; old v1 saves need no reset.
+  for (const id of ids) {
+    const g=raw.guides?.[id];
+    if(g && Number.isInteger(g.step) && g.step>=0 && g.step<50)
+      out.guides[id]={step:g.step,finished:g.finished===true,skipped:g.skipped===true};
   }
   if (Number.isFinite(raw.position?.x) && Number.isFinite(raw.position?.y)) out.position={x:Math.max(.04,Math.min(.96,raw.position.x)),y:Math.max(.06,Math.min(.94,raw.position.y))};
   out.calm=raw.calm===true; out.ending=raw.ending===true && out.completed.length===LESSONS.length;
@@ -50,7 +56,7 @@ export function seedFor(state,id,mode) {
 export function record(state,id,mode,success,at=Date.now()) {
   if(!lessonById(id)) throw new Error('Unknown lesson');
   const run=runState(state,id,mode);
-  const assisted=run.hints>0 || (mode==='check' && run.attempts>0);
+  const assisted=run.supported===true || run.hints>0 || (mode==='check' && run.attempts>0);
   state.evidence.push({id,mode,success,assisted,at});
   state.evidence=state.evidence.slice(-1000); run.attempts++;
   if(success && mode==='adventure' && !state.completed.includes(id)) state.completed.push(id);

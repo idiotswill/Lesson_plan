@@ -1,8 +1,8 @@
 /** Original challenges. Reference metadata is not a redistribution of Moodle materials. */
 export const SOURCES = {
   sets: { title: 'J. Krcum — Skupovi. Skupovi brojeva', location: 'PDF pp. 1–5: membership, union, intersection, difference, complement; exercises on p. 5.', note: 'Reviewed from the supplied course pack. This chapter covers set operations, not the full algebra course.' },
-  python: { title: 'Toma Rončević — Uvod u programiranje (6 January 2016)', location: '§2.3; §3.1–3.2; §3.4. Printed pp. 29–32, 45–51, 56–65 (PDF page = printed page + 1).', note: 'The source uses Python 2. All executable exercises here use Python 3: print(...), / versus //, and no Python 2 input evaluation.' },
-  web: { title: 'Osnove izrade web stranica — Predavanje 13.10. (13 October 2021)', location: 'PDF pp. 1–8: document structure/headings; 17–18: links/anchors; 19–24: CSS, selectors and colours.', note: 'Reviewed from the supplied lecture. We use modern id-based anchors and quoted attributes. Preview checks are deliberately limited, not a full HTML/accessibility audit.' }
+  python: { title: 'Toma Rončević — Uvod u programiranje (6 January 2016)', location: '§2.3; §3.1–3.4. Printed pp. 29–32, 45–65 (PDF page = printed page + 1).', note: 'The source uses Python 2. All executable exercises here use Python 3: print(...), / versus //, and no Python 2 input evaluation.' },
+  web: { title: 'Osnove izrade web stranica — Predavanje 13.10. (13 October 2021)', location: 'PDF pp. 1–9: document structure/headings; 17–18: links/anchors; 19–24: CSS, selectors and colours. Padding is supplementary (MDN), not verified in those lecture pages.', note: 'Reviewed from the supplied lecture. We use modern id-based anchors and quoted attributes. Preview checks are deliberately limited, not a full HTML/accessibility audit.' }
 };
 export const ISLANDS = [
   { id:'sets', name:'The Firefly Glade', course:'Linearna algebra', tag:'Sets / skupovi', x:.25, y:.43, colour:'#bfe5ae', symbol:'∩', intro:'Two moonflowers claim the same fireflies. Neither flower is willing to share. Fortunately, mathematics is less petty.', reward:'The green lantern', source:'sets' },

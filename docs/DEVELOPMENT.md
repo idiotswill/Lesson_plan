@@ -49,3 +49,11 @@ Never commit source packs or personal records. `.gitignore` includes common cour
 6. Improve keyboard editor indentation/outdent, larger-screen typography options and screen-reader descriptions of mathematical diagrams.
 
 Keep the project grounded in two observable outcomes: a game the learner wants to return to, and problems the learner can later solve without the game's help.
+
+## v0.2 guided-teaching contract
+
+`src/teaching-content.js` holds original, source-labelled step sequences. Each step introduces an idea or demonstrates a method, and may contain a bounded guided action. `src/teaching.js` renders member cards, worked execution frames, live HTML previews and corrective explanations. Worked frames are fixed demonstrations, not a pretend Python interpreter; `tests/python_grader_test.py` checks them against actual CPython.
+
+The challenge is hidden while the guide is open. Skip/replay are explicit choices. Guidance never writes to `completed` or `evidence`; only an actual challenge submission does. Opening guidance marks that attempt `supported`, including in check mode. A fresh variation resets support for that attempt. The optional `guides` save field is validated by known lesson IDs and retains checkpoints without changing the v1 save key or requiring a reset.
+
+Future additions should introduce every required notation/API before asking for independent work, include a worked sequence plus a smaller guided task, provide useful wrong-answer feedback, and keep course content distinct from enrichment. First assess whether the learner can now start and explain the method; do not respond to a teaching failure by adding more islands.

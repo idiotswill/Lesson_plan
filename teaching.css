@@ -1,0 +1,49 @@
+/* v0.2: teach before challenge; no decorative quiz interrupting an editor. */
+.teaching-toolbar {display:flex;gap:14px;align-items:center;padding:12px 26px;border-bottom:1px solid var(--border);flex-wrap:wrap}
+.teaching-toolbar small {color:var(--muted);font-size:12px;max-width:480px}
+#guided-teaching {max-width:760px;margin:0 auto;padding:26px 30px 30px}
+#guided-teaching[hidden],.mission-layout[hidden] {display:none}
+.guide-heading {display:flex;align-items:center;justify-content:space-between;gap:20px}
+.guide-heading h3 {font-family:Georgia,serif;font-size:28px;margin:7px 0 18px;line-height:1.2}
+.guide-companion {font-size:52px;color:var(--gold);flex-shrink:0}
+.guide-intro,.guide-caption {font-size:16px;line-height:1.7;max-width:68ch}
+.guide-board {border:1px solid var(--border);border-radius:14px;padding:16px;margin:20px 0;background:#162737}
+.guide-board > p {font-family:ui-monospace,monospace;font-size:14px;line-height:1.6;margin:0 0 15px}
+.guide-members {display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.guide-member {display:flex;align-items:center;flex-direction:column;gap:5px;border:2px solid transparent;border-radius:12px;padding:12px 4px;background:#22374a;color:#d8e6ec}
+.guide-member strong {font-size:24px;color:#ffdc89}
+.guide-member span {font-size:12px}
+.guide-member.focus {border-color:#ffdc89;background:#364632}
+.guide-board .guide-result {margin:15px 0 0;color:#d2efb0}
+.guide-code {font-size:15px;line-height:1.65;overflow-x:auto;padding:14px 8px;background:#101b28;border:1px solid var(--border);border-radius:12px}
+.guide-code > span {display:block;padding:1px 14px;min-height:1.5em;border-left:3px solid transparent}
+.guide-code > .current {background:#344339;border-color:#ffdc89;color:#ffedbe}
+.guide-values {display:flex;flex-wrap:wrap;gap:10px;margin:14px 0}
+.guide-values > div {min-width:90px;border-radius:10px;background:#26394b;padding:10px 15px;display:flex;flex-direction:column;gap:4px}
+.guide-values small {color:#c0d0df;font-size:12px}
+.guide-values strong {color:#ffe1a3;font-family:ui-monospace,monospace;font-size:21px}
+.guide-caption {padding:12px 16px;border-left:3px solid #ffdc89;background:#1d2d3e}
+.guide-trace-controls,.guide-controls {display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.guide-trace-controls {margin:16px 0 24px}
+.guide-trace-controls span {font-size:12px;color:var(--muted)}
+.guide-controls {margin-top:22px;border-top:1px solid var(--border);padding-top:20px}
+.guide-source,.guide-footnote {font-size:12px;line-height:1.6;color:var(--muted);margin-top:18px}
+.guide-footnote {font-size:11px;margin-top:8px}
+.guide-table {overflow-x:auto;margin:20px 0}
+.guide-table table {width:100%;border-collapse:collapse}
+.guide-table td,.guide-table th {padding:10px;border-bottom:1px solid var(--border);text-align:left;font-size:14px}
+.guide-choices {display:flex;gap:10px;flex-wrap:wrap;margin:15px 0}
+.guide-prompt {font-weight:600;font-size:16px;line-height:1.6;margin-top:24px}
+.guide-token {min-width:50px}
+.guide-token[aria-pressed=true] {background:#344a38;border-color:#d2efb0;color:#e6f5d4}
+#guide-answer {display:block;width:100%;max-width:100%;font:16px/1.6 ui-monospace,monospace;color:#e5eef9;background:#111e2c;border:1px solid #657891;border-radius:8px;padding:10px 12px;margin:8px 0 14px;resize:vertical}
+textarea#guide-answer {min-height:95px}
+#guide-feedback:empty {display:none}
+#guide-feedback {padding:13px 16px;border-radius:10px;font-size:15px;line-height:1.65;margin-top:16px}
+.guide-good {background:#1e382d;color:#dbedc7}
+.guide-retry {background:#403528;color:#ffe1ad}
+.guide-page {display:block;width:100%;height:170px;border:1px solid #536b80;border-radius:8px;background:white;margin:8px 0 14px}
+.guide-preview-label {font-size:11px;letter-spacing:1px;color:var(--muted);margin-top:18px}
+@media(max-width:600px){#guided-teaching{padding:20px 16px}.teaching-toolbar{padding:12px 16px}.guide-heading h3{font-size:25px}.guide-member span{font-size:10px}.guide-members{gap:5px}.guide-trace-controls{gap:8px}.guide-intro,.guide-caption{font-size:15px}}
+
+#guided-teaching button:disabled {cursor:not-allowed}

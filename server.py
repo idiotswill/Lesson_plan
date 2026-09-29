@@ -10,7 +10,7 @@ import urllib.parse
 import webbrowser
 
 ROOT = Path(__file__).resolve().parent
-ALLOWED_ROOT = {"index.html", "styles.css"}
+ALLOWED_ROOT = {"index.html", "styles.css", "teaching.css"}
 
 class Handler(http.server.SimpleHTTPRequestHandler):
     def do_GET(self) -> None:

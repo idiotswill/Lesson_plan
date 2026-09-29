@@ -1,3 +1,27 @@
+# QA record — v0.2 / 29 September 2026
+
+## Executed for this revision
+
+- `npm test`: **18 test groups passed** (12 existing plus 6 teaching/content/save groups).
+- `python tests/python_grader_test.py`: **5 tests passed**. All four Python demonstration sequences, including every frame of the accumulator loop, match actual CPython execution. Checks also cover alternative inputs, the strict wind boundary, zero stops, wrong formulas, syntax errors and non-terminating loops.
+- `python tests/browser_test.py --offline-harness`: **10 acceptance groups passed**. The new groups traverse **all 10 teaching paths and all 27 guided tasks**, try incorrect/blank answers, inspect rendered HTML, advance every demonstration, resume a paused guide, reveal a stuck step, and verify that no story/independent-learning credit is created by guided practice. Existing full-chapter regression groups still pass.
+
+Teaching views for sets, loop tracing and editable HTML were rendered and visually inspected. The browser suite also checks the 390px overall page width. This is not an exhaustive accessibility/device audit.
+
+A separate live-localhost smoke test was attempted. Chromium returned **net::ERR_BLOCKED_BY_ADMINISTRATOR** before loading the app. Therefore native HTTP module loading, real browser localStorage reloads and live Pyodide remain unverified in this environment. Save migration/round-trips and in-session guide resume are tested, but must not be represented as a real-storage reload pass.
+
+The production app, not the test harness, still uses native ES modules, browser localStorage and the pinned Pyodide worker. Walkthroughs themselves require no Python download. The test bridge is not shipped as a runtime fallback.
+
+## Teaching accuracy versus learning effectiveness
+
+The set checker is compared against the supplied LA-01 p. 5 worked exercise. Python demonstration states are independently replayed in CPython. Web examples use the actual preview DOM, and the existing challenge checks use computed CSS. These tests support the specified examples and behaviours; they do not prove that all course content is correct or that the game teaches effectively. Fresh checks remain simple parameter changes, not a validated transfer instrument.
+
+Next human check: can a beginner start the first activity, explain the method, and solve a new small problem without copying the recap? That remains unverified. No claim of guaranteed mastery or exam readiness is made.
+
+---
+
+## Previous release record
+
 # QA record — v0.1 / 28 September 2026
 
 ## Executed successfully

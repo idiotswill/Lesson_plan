@@ -1,4 +1,4 @@
-# Source-to-skill map — v0.1
+# Source-to-skill map — v0.2
 
 Reviewed 28 September 2026. “Reviewed” below means the named sections were actually inspected, including rendered diagrams where relevant. It does not mean every textbook, ZIP archive or past assessment was reviewed.
 
@@ -30,9 +30,9 @@ Only original teaching explanations and exercises are distributed. The private s
 | `py-energy` | UP-01 §2.3, printed pp. 29–32; §3.1–3.2, pp. 45–51 | Assign an arithmetic result based on inputs | Compute the moth's remaining energy | Multiple inputs including zero/one; fresh check changes unit rate |
 | `py-decision` | UP-01 §3.4, printed pp. 56–61 | Boolean conjunction, decisions, strict inequality | Decide whether Pip flies | True/False output, equality boundary and uncharged case |
 | `py-loop` | UP-01 §3.4, printed pp. 61–65 | Repetition, accumulator, counter update, termination | Budget a sequence of lanterns | New stops; zero/one cases; loop AST requirement plus output tests |
-| `web-structure` | WEB-01 pp. 1–8 | Separate title from visible h1 and paragraph | Name the observatory's webpage | New title; actual DOM and visible elements |
+| `web-structure` | WEB-01 pp. 1–9 | Separate title from visible h1 and paragraph | Name the observatory's webpage | New title; actual DOM and visible elements |
 | `web-links` | WEB-01 pp. 17–18 | Connect fragment href to a unique id | Give stars directions | New target ID; DOM link/target checks |
-| `web-css` | WEB-01 pp. 19–24 | Reusable class selector, colour, padding | Light two paper beacons | New class/colour/spacing; computed styles on both elements |
+| `web-css` | WEB-01 pp. 19–24; supplementary MDN padding | Reusable class selector and colour; supplementary padding | Light two paper beacons | New class/colour/spacing; computed styles on both elements |
 
 Prerequisites are presented in the activity order: membership before set operations; expressions before decisions and loops; HTML structure before anchors and CSS. This is a compact prototype sequence, **not a claimed reproduction of the lecturer's weekly plan**.
 
@@ -61,3 +61,15 @@ A loop syntax check plus successful examples does not prove a learner understand
 All set variations presently keep two elements in each Venn region, although the core checker handles empty sets correctly. Varied cardinalities, empty intersections, subset cases and symbolic expressions should be added before broader transfer is claimed. Fresh checks mostly change parameters; they are not yet a validated transfer assessment. Follow-up review is manual, not a complete spaced-practice scheduler. Later-check evidence uses a minimum 24-hour gap between successful fresh checks.
 
 Next content work should inventory the remaining packs and archive contents privately, build a larger prerequisite graph, validate original questions against source-level difficulty, and obtain feedback on both enjoyment and transfer before expanding the semester.
+
+## v0.2 teaching revision — 29 September 2026
+
+This is a targeted revision to the first chapter after the learner reported that it expected answers without enough teaching. It does not expand semester coverage.
+
+- **Sets:** LA-01 p. 1 (set, element, membership notation); p. 2 (universal set); pp. 3–4 (operation rules); p. 5 (worked practice). Every set-operation walkthrough introduces notation, then examines each member of a four-element example, then offers a small new collection to assemble. The checker is also compared against the four results in the supplied p. 5 worked exercise.
+- **Python:** UP-01 §2.3 (expressions, assignment, comparisons, Boolean operators), §3.3 (colon, indentation), §3.4 (if, while, updating counters, tracing and stopping). All teaching examples are original Python 3 examples, not verbatim source-code transcriptions. Their displayed AFTER-instruction states are tested against real CPython execution. The program-inspection panel for learner submissions continues to show BEFORE-line trace events and labels that difference.
+- **HTML/CSS:** WEB-01 pp. 1–3, 7–9 (structure and paragraph; p. 9 was missing from the earlier abbreviated source range), pp. 17–18 (links/anchors), pp. 19–24 (CSS rules/classes/colours). Guided HTML practice precedes full-page construction. Modern id destinations remain an explicit adaptation of the older lecture example.
+
+**Correction to v0.1 attribution:** the selected WEB-01 pages do not teach padding. Padding was an extra game requirement, not verified course coverage. It is now labelled supplementary in the guide, source note and table. Its one-value syntax/inner-spacing explanation is cross-checked separately at https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/padding . This does not establish that padding is or is not taught elsewhere in the course.
+
+Teaching completion is a checkpoint, not a competence result. Warm-up choices, numeric answers, token selections and the small HTML edit provide supported practice only. The prototype still lacks a full prerequisite curriculum, validated transfer tasks and evidence of sustained retention. Do not interpret a successful software test as proof that a beginner has learned the content.

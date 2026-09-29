@@ -3,7 +3,17 @@
 
 A small, single-player learning adventure: sail a walnut boat between floating islands, persuade opinionated flowers to share their fireflies, teach Pip the mechanical moth some judgement, and rebuild an observatory's tiny website.
 
-**v0.1 is a playable first chapter, not a complete semester or a validated mastery programme.** Ten original activities are mapped to selected sections of three supplied course packs. No Moodle files, student records, credentials, or private Drive links are committed here.
+**v0.2 is a playable first chapter, not a complete semester or a validated mastery programme.** Ten original activities are mapped to selected sections of three supplied course packs. No Moodle files, student records, credentials, or private Drive links are committed here.
+
+## v0.2 — learn before solving
+
+The first version was too close to a practice tool: short definitions followed by whole problems. This update adds **ten guided teaching paths** before the existing experiments. They introduce the notation/syntax, demonstrate the method, ask for a small action with explanatory feedback, and then hand over the full problem.
+
+Sets begin with membership and braces, not an unexplained union symbol. Python demonstrations highlight one instruction at a time and show the changing values. HTML has worked previews and a small editable paragraph before the full-page task. CSS distinguishes selectors, properties, values, and the extra padding rule.
+
+The walkthrough opens automatically the first time you enter each activity. **Teach me step by step** replays it. You can skip it or pause and resume. Revealing a small step is allowed; watching or completing a walkthrough creates no story reward or independent-learning evidence.
+
+**Updating from v0.1:** export your save as a precaution, replace the game files, and start again with `Start.cmd`. Existing version-1 saves, drafts and progress are accepted; no reset is needed. Keep the same browser and localhost port, or import your backup. This update improves teaching but has not yet been validated for learning transfer.
 
 ## Play locally
 
@@ -37,11 +47,11 @@ Each course lantern needs its activities completed. All three lanterns unlock th
 
 ## Learning and progress
 
-“In the world” combines an explanation, a different worked example and an interactive experiment. “Without the scenery” presents a new parameterised problem without those teaching aids. Field-journal labels distinguish supported practice, an in-world solution, a fresh check and a check passed at least 24 hours later.
+“In the world” begins with guided instruction and small supported exercises, followed by an interactive experiment. “Without the scenery” presents a new parameterised problem without those teaching aids. Field-journal labels distinguish supported practice, an in-world solution, a fresh check and a check passed at least 24 hours later.
 
-These labels are **limited evidence, not mastery scores**. Fresh-check evidence requires success without in-app hints, revealed solutions or earlier failed submissions on that variation. The app cannot detect external help. The set generator currently has a fixed region-size pattern; broader transfer and authentic exam-style coverage remain future work.
+These labels are **limited evidence, not mastery scores**. Fresh-check evidence requires success without in-app guided teaching, hints, revealed solutions or earlier failed submissions on that variation. The app cannot detect external help. The set generator currently has a fixed region-size pattern; broader transfer and authentic exam-style coverage remain future work.
 
-Browser saves include progress, current editor drafts and problem variants. Export JSON backups in **Save & settings**. Importing or resetting requires confirmation. A corrupt stored save is not silently overwritten. Saves are specific to the browser origin: changing ports or moving to GitHub Pages requires export/import.
+Browser saves include progress, current editor drafts, problem variants and optional teaching checkpoints. Export JSON backups in **Save & settings**. Importing or resetting requires confirmation. A corrupt stored save is not silently overwritten. Saves are specific to the browser origin: changing ports or moving to GitHub Pages requires export/import.
 
 ## Runtime and privacy
 
@@ -60,6 +70,8 @@ Pure game/assessment logic (Node 20+; no npm dependencies):
 ```sh
 npm test
 ```
+
+Worked Python examples and the grading harness can also be checked with `python tests/python_grader_test.py` (Python 3 plus Node; no pip packages). This compares the displayed teaching trace frames with actual CPython execution, not merely another copy of the expected formula.
 
 Browser acceptance tests require Python Playwright and its Chromium browser:
 

@@ -43,6 +43,9 @@ export class World {
   glow(x,y,r,colour){const c=this.ctx,g=c.createRadialGradient(x,y,0,x,y,r);g.addColorStop(0,colour);g.addColorStop(1,'transparent');c.fillStyle=g;c.fillRect(x-r,y-r,r*2,r*2);}
   tree(x,y,s=1){const c=this.ctx;c.fillStyle='#263f49';c.fillRect(x-2*s,y-5*s,4*s,22*s);this.poly([[x,y-37*s],[x-18*s,y+4*s],[x+18*s,y+4*s]],'#38635b');this.poly([[x,y-47*s],[x-14*s,y-10*s],[x+14*s,y-10*s]],'#487569');}
   draw(){
+    // The static map behind a lesson does not need 60 repaints per second.
+    if(this.hasDrawn && document.querySelector('dialog[open]'))return;
+    this.hasDrawn=true;
     if(!this.w)return;const c=this.ctx,w=this.w,h=this.h,t=this.state.calm?0:this.time;
     c.clearRect(0,0,w,h);const bg=c.createLinearGradient(0,0,w,h);bg.addColorStop(0,'#111c2b');bg.addColorStop(.6,'#142d39');bg.addColorStop(1,'#1c283e');c.fillStyle=bg;c.fillRect(0,0,w,h);
     this.glow(w*.28,h*.32,w*.38,'#376a5725');this.glow(w*.78,h*.70,w*.34,'#67558625');

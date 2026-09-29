@@ -1,5 +1,6 @@
 import {ISLANDS,LESSONS,SOURCES,lessonById,islandLessons} from './content.js';
 import {loadSave,persist,parseSave,newSave,runState,seedFor,record,evidenceLabel,setCase,parseSet,setText,sameSet,expression,pythonCases,webSpec} from './core.js';
+import {GuidedLesson,guideProgress} from './teaching.js';
 import {World} from './world.js';
 import {PythonRunner} from './python.js';
 import {webStarter,previewDocument,checkWeb} from './web-workshop.js';
@@ -10,6 +11,22 @@ const loaded=loadSave(storage);
 let state=loaded.state,blocked=loaded.blocked||false,selectedIsland='sets',lesson=null,mode='adventure',data=null,chosen=new Set(),session=0,busy=false,previewVersion=0,saveTimer;
 if(matchMedia('(prefers-reduced-motion: reduce)').matches)state.calm=true;
 const runner=new PythonRunner();
+const guide=new GuidedLesson($('guided-teaching'),{
+  getState:()=>state,onChange:()=>save(),
+  onSupport:()=>{runState(state,lesson.id,mode).supported=true;save();},
+  onExit:()=>{
+    document.querySelector('.mission-layout').hidden=false;
+    $('tutorial-status').textContent='The walkthrough remains available. Solving after help is supported practice, not independent proof.';
+    $('mission').scrollTop=0;$('run-button').focus({preventScroll:true});
+  }
+});
+function startGuide(restart=false){
+  if(!lesson||busy)return;
+  document.querySelector('.mission-layout').hidden=true;
+  $('tutorial-status').textContent='One idea at a time. Worked examples are practice; the experiment checks your own work.';
+  guide.open(lesson.id,{restart});
+}
+$('tutorial-replay').onclick=()=>startGuide(true);
 function warning(message){$('storage-warning').hidden=!message;$('storage-warning').textContent=message;if(message)$('local-save-status').textContent='Memory only · export a backup';}
 warning(loaded.warning);
 function save(){
@@ -53,10 +70,10 @@ function draft(){
 function initialDraft(){return state.drafts[key()];}
 function setFeedback(text,type=''){const f=$('feedback');f.textContent=text;f.className=type;}
 function resetResult(){$('result-details').replaceChildren();setFeedback('');$('next-button').hidden=true;}
-function setBusy(value){busy=value;['run-button','fresh-button','adventure-mode','check-mode','hint-button','solution-button'].forEach(id=>$(id).disabled=value);$('stop-button').hidden=!value||lesson?.kind!=='python';document.querySelectorAll('#work-area textarea,#work-area input,#work-area button.firefly').forEach(el=>el.disabled=value);}
+function setBusy(value){busy=value;['run-button','fresh-button','adventure-mode','check-mode','hint-button','solution-button','tutorial-replay'].forEach(id=>$(id).disabled=value);$('stop-button').hidden=!value||lesson?.kind!=='python';document.querySelectorAll('#work-area textarea,#work-area input,#work-area button.firefly').forEach(el=>el.disabled=value);}
 function stopSession(){session++;runner.stop();setBusy(false);}
 function openLesson(id,newMode='adventure'){
-  stopSession();lesson=lessonById(id);if(!lesson)return;mode=newMode;chosen=new Set();
+  stopSession();guide.close();document.querySelector('.mission-layout').hidden=false;lesson=lessonById(id);if(!lesson)return;mode=newMode;chosen=new Set();
   const src=SOURCES[lesson.source];
   $('mission-course').textContent=ISLANDS.find(i=>i.id===lesson.island).course;
   $('mission-title').textContent=lesson.title;$('mission-term').textContent=lesson.term;
@@ -75,7 +92,11 @@ function openLesson(id,newMode='adventure'){
   $('run-button').textContent=mode==='check'?'Check my work':lesson.kind==='sets'?'Release the fireflies':'Run experiment';
   $('download-work').hidden=lesson.kind==='sets';
   if(!$('mission').open)$('mission').showModal();
-  $('mission').scrollTop=0;save();
+  $('mission').scrollTop=0;
+  const progress=guideProgress(state,id);
+  $('tutorial-status').textContent=progress.finished?'Walkthrough visited · replay any time. This is not a mastery claim.':'New to this? Learn the pieces before the full problem.';
+  if(mode==='adventure'&&!progress.finished&&!progress.skipped)startGuide();
+  save();
 }
 function renderSets(){
   const saved=initialDraft();
@@ -98,7 +119,7 @@ function renderPython(){
   let brief=lesson.id==='py-energy'?`Inputs: pods and leak. Each pod contributes ${rate} units. Assign the remaining amount to energy.`:lesson.id==='py-decision'?'Inputs: wind, limit, charged. Assign True to fly only when charged is True and wind < limit; False otherwise.':'Input: stops (a non-negative integer). Use a while or for loop to assign the sum of 1 through stops to charge. For stops = 0, charge must be 0.';
   $('task-brief').textContent=brief+' The same program is tested with several inputs; do not overwrite the supplied inputs.';
   const stage=mode==='adventure'?'<div class="pip-stage"><div class="orchard-lights">'+Array.from({length:6},()=>'<span></span>').join('')+'</div><div class="pip"></div><small id="pip-caption">Pip is waiting to see what your program does.</small></div>':'';
-  $('work-area').innerHTML=`<div class="input-line">First test inputs: ${escape(JSON.stringify(first))}</div>${stage}<label class="editor-label" for="code-editor">PYTHON 3 · Ctrl/⌘ + Enter to run · Tab inserts 4 spaces</label><textarea id="code-editor" spellcheck="false" autocomplete="off" autocapitalize="off" maxlength="18000"></textarea><p class="muted" style="font-size:10px;margin:8px 0">Real Python, not a simulated parser. First run downloads the runtime. Never paste untrusted code.</p>`;
+  $('work-area').innerHTML=`<div class="input-line">First test inputs: ${escape(Object.entries(first).map(([name,value])=>name+' = '+pythonLiteral(value)).join(' · '))}</div>${stage}<label class="editor-label" for="code-editor">PYTHON 3 · Ctrl/⌘ + Enter to run · Tab inserts 4 spaces</label><textarea id="code-editor" spellcheck="false" autocomplete="off" autocapitalize="off" maxlength="18000"></textarea><p class="muted" style="font-size:10px;margin:8px 0">Real Python, not a simulated parser. First run downloads the runtime. Never paste untrusted code.</p>`;
   $('code-editor').value=initialDraft()??(mode==='check'?`# Output variable: ${lesson.output}\n`:lesson.starter.replace('worth 3','worth '+rate));
   $('code-editor').oninput=draft;codeEditor('code-editor');
 }
@@ -122,7 +143,7 @@ function updatePreview(){
     frame.srcdoc=previewDocument(html,css).replace('<html','<html data-preview-token="'+token+'"');
   });
 }
-function successMessage(){return mode==='check'?(runState(state,lesson.id,mode).hints||runState(state,lesson.id,mode).attempts>1?'Correct. This was supported or corrected practice; use New variation for a fresh independent check.':'Fresh check passed without in-app help. This is evidence for this skill, not proof of course mastery.'):'It works. A little more of the world remembers what it was supposed to be.';}
+function successMessage(){return mode==='check'?(runState(state,lesson.id,mode).supported||runState(state,lesson.id,mode).hints||runState(state,lesson.id,mode).attempts>1?'Correct. This was supported or corrected practice; use New variation for a fresh independent check.':'Fresh check passed without in-app help. This is evidence for this skill, not proof of course mastery.'):'It works. A little more of the world remembers what it was supposed to be. '+(runState(state,lesson.id,mode).supported?'This was practice after guided teaching. Try a fresh check later to see what you can do independently.':'');}
 function finish(success,details=''){
   record(state,lesson.id,mode,success);save();
   setFeedback(success?successMessage():details,' '+(success?'success':'failure'));
@@ -133,7 +154,9 @@ function finish(success,details=''){
 $('run-button').onclick=async()=>{
   if(busy)return;draft();resetResult();const ticket=session;
   if(lesson.kind==='sets'){
-    try{const answer=mode==='adventure'?[...chosen]:parseSet($('set-answer').value),correct=sameSet(answer,data.expected);const missing=data.expected.filter(n=>!answer.includes(n)).length,extra=answer.filter(n=>!data.expected.includes(n)).length;finish(correct,`Not quite: ${missing} required member(s) missing, ${extra} extra member(s). Recheck ${expression(lesson.op)}. Nothing is lost by trying again.`);}catch(e){record(state,lesson.id,mode,false);save();setFeedback(e.message,'failure');}return;
+    try{const answer=mode==='adventure'?[...chosen]:parseSet($('set-answer').value),correct=sameSet(answer,data.expected);const missing=data.expected.filter(n=>!answer.includes(n)).length,extra=answer.filter(n=>!data.expected.includes(n)).length;const candidate=data.U.find(n=>answer.includes(n)!==data.expected.includes(n))??answer.find(n=>!data.U.includes(n));
+      const membership=candidate===undefined?'':!data.U.includes(candidate)?`${candidate} is outside U, so it cannot enter this result.`:`${candidate} is ${data.A.includes(candidate)?'in':'not in'} A and ${data.B.includes(candidate)?'in':'not in'} B. ${lesson.learn}`;
+      finish(correct,`${missing} required member(s) missing, ${extra} extra member(s). Let’s inspect one: ${membership} Use Teach me step by step to practise the rule first.`);}catch(e){record(state,lesson.id,mode,false);save();setFeedback(e.message,'failure');}return;
   }
   setBusy(true);
   try{
@@ -155,7 +178,7 @@ $('run-button').onclick=async()=>{
         document.querySelectorAll('.orchard-lights span').forEach((el,i)=>el.classList.toggle('lit',i<amount*6));
         if(first.trace?.length)renderTrace(first.trace);
       }
-      finish(correct,'Pip did exactly what your program said. One or more inputs produced the wrong result; inspect the cases below.');
+      finish(correct,'One or more inputs produced a different result. Compare the supplied values, your output and the expected value below. Teach me step by step walks through how to build the instruction.');
     }
   }catch(e){if(ticket!==session)return;setFeedback(e.message,'failure');if(e.execution){record(state,lesson.id,mode,false);save();}}
   finally{if(ticket===session)setBusy(false);}
@@ -176,7 +199,7 @@ function workedSolution(){
   return `.${data.className} {\n    color: ${data.colour};\n    padding: ${data.padding}px;\n}`;
 }
 $('solution-button').onclick=()=>{runState(state,lesson.id,mode).hints=3;$('solution-text').textContent=workedSolution();$('solution-text').hidden=false;$('hint-text').textContent='Solution revealed. This variation counts as supported practice, not independent evidence.';save();};
-$('fresh-button').onclick=()=>{const run=runState(state,lesson.id,mode);run.variant++;run.attempts=0;run.hints=0;delete state.drafts[key()];openLesson(lesson.id,mode);};
+$('fresh-button').onclick=()=>{const run=runState(state,lesson.id,mode);run.variant++;run.attempts=0;run.hints=0;run.supported=false;delete state.drafts[key()];openLesson(lesson.id,mode);};
 $('adventure-mode').onclick=()=>{draft();openLesson(lesson.id,'adventure');};$('check-mode').onclick=()=>{draft();openLesson(lesson.id,'check');};
 $('next-button').onclick=()=>{const group=islandLessons(lesson.island),next=group.find(l=>!state.completed.includes(l.id));if(mode==='adventure'&&next)openLesson(next.id);else{$('mission').close();selectIsland(lesson.island);$('world-message').textContent=mode==='check'?'A fresh check is recorded in your journal. Come back another day to see what stayed.':'An island remembers its light. There are other places worth visiting.';}};
 $('mission').addEventListener('close',stopSession);$('mission').addEventListener('cancel',stopSession);
@@ -189,7 +212,7 @@ $('download-work').onclick=()=>{
 };
 function renderJournal(){
   $('journal-content').innerHTML=ISLANDS.map(i=>`<section class="journal-course"><h3>${escape(i.course)}</h3>${i.pending?'<p class="muted">Teaching materials pending; no learning claims yet.</p>':islandLessons(i.id).map(l=>`<div class="journal-entry"><div><strong>${escape(l.term)}</strong><small>${escape(evidenceLabel(state,l.id))}</small></div><button data-check="${l.id}">Fresh check ↗</button></div>`).join('')}</section>`).join('');
-  $('journal-content').querySelectorAll('[data-check]').forEach(b=>b.onclick=()=>{$('journal').close();const r=runState(state,b.dataset.check,'check');r.variant++;r.attempts=0;r.hints=0;delete state.drafts[b.dataset.check+':check'];openLesson(b.dataset.check,'check');});
+  $('journal-content').querySelectorAll('[data-check]').forEach(b=>b.onclick=()=>{$('journal').close();const r=runState(state,b.dataset.check,'check');r.variant++;r.attempts=0;r.hints=0;r.supported=false;delete state.drafts[b.dataset.check+':check'];openLesson(b.dataset.check,'check');});
 }
 $('journal-button').onclick=()=>{renderJournal();$('journal').showModal();};
 $('save-button').onclick=()=>$('settings').showModal();
