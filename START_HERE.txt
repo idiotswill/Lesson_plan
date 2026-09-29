@@ -1,0 +1,27 @@
+THE UNFINISHED WORLD — CONNECTED HARBOUR v0.3.0
+
+This is the COMPLETE game, not a patch.
+
+1. Before updating, export your save from the old game.
+2. Close old game tabs AND stop the old launcher window.
+3. Extract this folder fully. Do not run files while they are inside the ZIP.
+4. Windows: double-click Start.cmd. Linux/macOS: run sh Start.sh.
+5. Keep the launcher open. The game opens at http://127.0.0.1:8000/
+
+Python 3.9 or newer and a desktop browser must already be installed.
+No pip/npm installation or internet connection is needed for ordinary play.
+Use this launcher, not double-clicked HTML or a generic static web server.
+
+Keep the same browser, host and port to retain your saved work. You can import
+an exported JSON backup in Save & settings. Do not use an old game build to
+save over new progress: it cannot understand the harbour state.
+
+Start at ANY of the five workstations. Each begins with its own explanation.
+The same cargo, page, charger, signal and computer must cooperate for a delivery.
+The full Observatory workbench edits the SAME page and returns to the harbour.
+Study desks retains the older focused activities and independent checks.
+
+Only run your own code. The local Python runner supports an introductory subset,
+not unrestricted Python or a hardened hostile-code sandbox.
+
+See README.md and docs/QA.md for scope and testing limitations.

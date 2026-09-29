@@ -1,6 +1,6 @@
 """Browser acceptance tests. --offline-harness uses a documented CPython bridge.
-Normal mode exercises localhost + real Pyodide; offline mode does NOT verify the
-CDN, Pyodide bootstrap, or browser-worker boundary. No test APIs ship in the app.
+Normal mode exercises localhost + local CPython; offline mode does NOT verify
+HTTP browser transport, native modules, or real browser storage. No test APIs ship in the app.
 Requires: pip install playwright; python -m playwright install chromium
 """
 from __future__ import annotations
@@ -15,25 +15,21 @@ from playwright.sync_api import sync_playwright, expect
 ROOT = Path(__file__).resolve().parents[1]
 parser=argparse.ArgumentParser()
 parser.add_argument('--offline-harness',action='store_true')
-parser.add_argument('--url',default='http://127.0.0.1:8000/')
+parser.add_argument('--url',default='http://127.0.0.1:8000/expedition.html')
 parser.add_argument('--screenshots',default='test-results')
 args=parser.parse_args()
 OUT=Path(args.screenshots);OUT.mkdir(exist_ok=True,parents=True)
-worker=(ROOT/'src/python-worker.js').read_text()
-harness=worker.split('const HARNESS=String.raw`',1)[1].split('`;',1)[0]
-# Preserve the harness's final expression, just as runPythonAsync does.
-py_harness=harness.rsplit('json.dumps(results, allow_nan=False)',1)[0]
-def run_python(payload):
-    ns={'__payload_json':json.dumps(payload)}
-    try:
-        exec(py_harness,ns,ns)
-        return {'type':'result','results':ns['results']}
-    except BaseException as e:
-        return {'type':'error','phase':'execution','message':type(e).__name__+': '+str(e)}
+import sys
+sys.path.insert(0,str(ROOT))
+from local_python import run
+from harbour_browser_test import bundle
 
+def run_python(payload):
+    try:return {'results':run(payload)}
+    except Exception as e:return {'error':type(e).__name__+': '+str(e)}
 
 def load_harness(page):
-    html=(ROOT/'index.html').read_text()
+    html=(ROOT/'expedition.html').read_text()
     html=html.replace('<link rel="stylesheet" href="styles.css">','<style>'+(ROOT/'styles.css').read_text()+'</style>')
     html=html.replace('<link rel="stylesheet" href="teaching.css">','<style>'+(ROOT/'teaching.css').read_text()+'</style>')
     html=html.replace('<script type="module" src="src/app.js"></script>','')
@@ -41,16 +37,10 @@ def load_harness(page):
     page.evaluate("""() => {
       const values = {};
       Object.defineProperty(window, 'localStorage', {value:{getItem:k=>values[k]??null,setItem:(k,v)=>values[k]=v}});
-      window.Worker = class {
-        constructor() {this.dead=false;setTimeout(()=>this.onmessage?.({data:{type:'ready'}}),20);}
-        postMessage(data) {this.onmessage?.({data:{type:'running'}});window.__runPython(data).then(result=>{if(!this.dead)this.onmessage?.({data:result});});}
-        terminate(){this.dead=true;}
-      };
+      window.fetch=async(path,options={})=>new Response(JSON.stringify(path==='/api/session'?{token:'test'}:await window.__runPython(JSON.parse(options.body))),{status:200});
     }""")
-    files=['content.js','core.js','world.js','python.js','web-workshop.js','teaching-content.js','teaching.js','app.js']
-    code='\n'.join(re.sub(r'^import .*?;\n','',(ROOT/'src'/f).read_text(),flags=re.M).replace('export ','') for f in files)
-    code=code.replace("new URL('./python-worker.js',import.meta.url)","'offline-test-worker'")
-    page.add_script_tag(content=code,type='module')
+    page.add_script_tag(content=bundle('app.js'))
+
 
 with sync_playwright() as p:
     # A system Chromium is useful in an offline test environment.
@@ -238,5 +228,5 @@ with sync_playwright() as p:
     assert page.evaluate('document.documentElement.scrollWidth <= innerWidth+1')
     assert not errors,errors
     print('PASS: mobile page width and no uncaught JavaScript errors')
-    print('MODE:', 'OFFLINE DOM HARNESS + actual local CPython (not Pyodide)' if args.offline_harness else 'LIVE localhost + actual Pyodide')
+    print('MODE:', 'OFFLINE DOM HARNESS + direct bounded CPython bridge (not HTTP transport)' if args.offline_harness else 'LIVE localhost + local CPython')
     browser.close()

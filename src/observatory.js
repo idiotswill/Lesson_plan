@@ -215,4 +215,5 @@ export function mountObservatory(root,state,onChange,{calm=false}={}) {
   $('po-resume').onclick=()=>{state.mode='check';onChange();$('po-check-picker').close();showMode();};
   $('po-return').onclick=()=>{support();state.mode='workshop';onChange();showMode();};
   showMode();
+  return ()=>{clearTimeout(renderTimer);stopVisit();previewTicket++;root.replaceChildren();};
 }

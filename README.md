@@ -1,88 +1,54 @@
-# The Unfinished World
-## Chapter 01 — The Lantern Archipelago
+# The Unfinished World — v0.3.0
+## A Harbour of Small Things
 
-Sail a walnut boat between floating islands, persuade opinionated flowers to share their fireflies, teach Pip the mechanical moth some judgement, and build an observatory's tiny website.
+A local, single-player learning adventure. Five subjects are available together from their beginnings. The crates, information page, Python charger, departure circuit and manifest computer belong to **one shared harbour**, not five resettable exercises.
 
-**v0.2.1 is a playable first chapter, not a complete learning programme or a validated mastery assessment.** It contains ten activities, ten step-by-step walkthroughs and 27 smaller guided tasks.
+## Start here
 
-## This update
+You need an installed **Python 3.9 or newer** and a desktop browser. No pip/npm packages, account, internet connection, API key or online AI service is needed to play after those are installed.
 
-Subject labels and skill notes now describe the game on its own. The teaching steps, experiments, rewards and saved-progress format remain in place. No new activities are added in this patch.
+- **Windows:** extract the complete game folder and double-click `Start.cmd`.
+- **Linux/macOS:** run `sh Start.sh` from the extracted folder.
+- Keep the launcher window open. Stop it with Ctrl+C when finished.
 
-**Updating:** export your save as a precaution, stop the old server, replace the game files and run `Start.cmd` again. Existing version-1 saves, drafts and teaching checkpoints are accepted. Keep the same browser and localhost port, or import your backup; no progress reset is required.
+The default address is `http://127.0.0.1:8000/`. Do not open the HTML file directly or use a generic static server: this build also needs its local Python service. `python3 server.py --no-browser` starts without opening a browser. `--port 8001` selects another port, but that is a different browser-save location.
 
-## Play locally
+**Updating from v0.2.1 or the Observatory patch:** export your old save first, close old tabs and stop the old launcher. Use the complete new folder, keeping the same browser, host and port. Existing activity progress and the Observatory page are retained; import your backup when moving browsers. Older game builds do not understand the new harbour field: do not use them to save over newer work.
 
-You need Python 3 to serve the static files. No pip packages, Node.js installation, API keys or paid AI service are needed to play.
+## Play a connected request
 
-**Windows:** extract the download and double-click `Start.cmd`. Keep its command window open while playing.
+Walk or click between the five buildings, or use their workstation buttons. Every workstation has its own foundation explanations, separate worked examples and things to try. No subject is locked behind another.
 
-**Linux/macOS:** run `sh Start.sh`, or:
+Your reusable sorter moves actual crates onto Pip's tray. The computer scans those same crate IDs into a manifest; changing the cargo does not silently update the old data. The circuit evaluates the actual loaded/clear inputs. Your real Python output supplies the battery. Nova reads your actual saved HTML page to choose a route. A wrong route, stale manifest, unsuitable circuit, wrong cargo or empty battery produces a different journey.
 
-```sh
-python3 server.py
-```
+The three requests can be attempted in any order. They reuse your work and create persistent changes in the harbour. Step, play or pause the journey; mistakes return cargo safely. There are no lives, deadlines, points or grind requirements.
 
-On Windows, use `py -3 server.py`. The default address is `http://127.0.0.1:8000/`; `--port 8001` selects an alternative. Do not open `index.html` directly through `file://`: native modules and workers need a server.
+The **full Observatory workbench** opens inside the harbour and edits the very same saved page. **Study desks** retains the earlier focused activities and checks. Guided use and world discoveries are not relabelled as mastery evidence.
 
-The files can also be served by a static host. Committing them does not automatically enable a website. Preserve the relative directory structure when publishing under a subpath.
+## Local execution and privacy
 
-## Explore
+Everything needed by the game is in the folder or the installed Python/browser. The launcher binds only to 127.0.0.1 and exposes no LAN service. No analytics, cloud saves, remote assets or runtime CDN are used. Progress is saved in this browser; export JSON backups from Save & settings.
 
-| Island | Subject | Activities |
-|---|---|---|
-| Firefly Glade | Sets & logic | Union, intersection, directed difference and complement |
-| Clockwork Orchard | Python | Variables and arithmetic, Boolean decisions, loops and accumulation |
-| Paper Observatory | HTML & CSS | Page structure, anchor links, reusable classes and styling |
-| Sleeping Foundry | Logic circuits | Future chapter; not playable yet |
-| Unwritten Archive | Computing | Future chapter; not playable yet |
+Python now runs in disposable local CPython children, with a session token, same-origin checks, restricted syntax, bounded values/loops/output and a four-second process timeout. This is **real Python for a documented introductory subset**, not unrestricted Python and not a hardened hostile-code sandbox. Imports, attributes, file/network access, classes and arbitrary function calls are disabled. Run only your own code. The Stop button cancels the result; the child may take up to four seconds to exit. Export code for ordinary Python outside this workbench.
 
-Click the map or use WASD/arrow keys while it is focused. Enter visits a nearby island; destination buttons provide an alternative. Activities can be opened directly without a story gate. Complete each island's experiments for its lantern; all three lanterns unlock the lighthouse. Calm motion, optional sound, hints and worked solutions are included. No lives, streak penalties or time pressure.
+HTML previews disable scripts, remote assets, forms and unsupported elements. Visitor rules are explicit deterministic game rules, not AI text understanding or a full accessibility audit.
 
-## Learn before solving
+## Scope and verification
 
-Every experiment starts by explaining its notation or syntax, demonstrating a method and letting you try a smaller step with feedback. Sets begin with membership and braces. Python examples highlight one instruction at a time and show changing values. HTML begins with a small editable paragraph; CSS introduces selectors, properties, values and inner spacing separately.
+This is a connected introductory increment, **not the complete curriculum or a finished campaign**. Digital-systems and computing activities are small foundational models, not verified comprehensive subject coverage. Broader mathematics, programming, web design and combined projects remain to be developed.
 
-The walkthrough opens automatically on the first visit. **Teach me step by step** replays it. You can skip, pause or resume, and reveal a small step when stuck. Guided practice alone creates no story reward or independent-learning evidence.
+See [Connected harbour implementation and limits](docs/CONNECTED_HARBOUR.md), [current QA](docs/QA.md), and [coverage](docs/CURRICULUM.md).
 
-“In the world” includes teaching and an interactive experiment. “Without the scenery” presents a new parameterised problem without those aids. Journal labels distinguish supported practice, an in-world solution, a fresh check and a check passed at least 24 hours later.
-
-These are **limited evidence, not mastery scores**. Fresh-check evidence requires success without in-app teaching, hints, revealed solutions or earlier failed submissions on that variation. Outside help cannot be detected. Broader learning transfer and sustained retention remain unverified.
-
-## Saves and privacy
-
-Browser saves contain progress, editor drafts, variants and teaching checkpoints. Export a JSON backup in **Save & settings**. Import and reset require confirmation; corrupt stored saves are not silently overwritten. Saves are specific to the browser origin, so changing ports or hosts requires export/import.
-
-The world, math and web activities use the included static files. Python downloads **Pyodide 0.27.7** from jsDelivr on demand and runs actual Python 3 in a worker. Initial loading needs internet; offline availability is not guaranteed. There are no application analytics or code-upload endpoints. The CDN receives ordinary runtime asset requests. Third-party runtimes retain their own licences and notices.
-
-Python execution has capped printed output, a line-event budget, a loading timeout, a five-second execution timeout and a Stop button. Each submission gets a fresh worker. **This is not a hardened sandbox for hostile code. Run only code you trust.**
-
-HTML/CSS previews disable scripts, forms, remote resources and unsupported elements. Checks inspect the rendered document and computed styles, not full conformance or accessibility. Python and sanitised web exports are available.
-
-## Tests
-
-With Node 20 or newer, no npm dependencies are needed:
+Developer tests (not needed to play):
 
 ```sh
 npm test
+python tests/python_grader_test.py
+python tests/local_server_test.py
+# With Playwright and Chromium installed:
+python tests/harbour_browser_test.py
+python tests/observatory_browser_test.py --browser /path/to/chromium
+python tests/browser_test.py --url http://127.0.0.1:8000/expedition.html
 ```
 
-Check worked examples and the grading harness with `python tests/python_grader_test.py` (Python 3 plus Node, no pip packages). Displayed trace values are compared with actual CPython execution.
-
-Browser acceptance tests require Playwright and Chromium:
-
-```sh
-python -m pip install playwright
-python -m playwright install chromium
-python server.py --no-browser
-# In another terminal:
-python tests/browser_test.py
-```
-
-Restricted environments can use `python tests/browser_test.py --offline-harness`. That mode runs the actual interface with an in-memory storage stand-in and a local CPython bridge. It does **not** verify CDN delivery, live Pyodide, real localStorage reloads or browser-worker isolation. Those substitutions are not part of the production runtime.
-
-## Development notes
-
-- [Skills, activity checks and coverage gaps](docs/CURRICULUM.md)
-- [Architecture, safeguards and expansion](docs/DEVELOPMENT.md)
-- [Test results and limitations](docs/QA.md)
+Each browser suite also has `--offline-harness`. Its substitutions are described in the QA record; passing it is not proof of native browser HTTP loading, real-storage reload, Windows launchers or platform-wide compatibility.

@@ -15,7 +15,7 @@ from playwright.sync_api import sync_playwright, expect
 
 ROOT = Path(__file__).resolve().parents[1]
 KEY = 'unfinished-world.v1'
-MODULES = ['observatory-state.js','content.js','core.js','web-workshop.js',
+MODULES = ['harbour-state.js','observatory-state.js','content.js','core.js','web-workshop.js',
            'observatory-content.js','observatory-engine.js','observatory.js','observatory-page.js']
 PAGE = '''<!doctype html><html lang="en"><head><title>My working sky</title></head><body>
 <h1>A sky for everyone</h1><p>Welcome to my observatory.</p>

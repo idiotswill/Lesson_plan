@@ -23,7 +23,7 @@ test('public subject metadata contains only skill descriptions',()=>{
 });
 
 test('chapter notes are visible descriptions, not hidden bibliography payloads',()=>{
- const html=readFileSync(new URL('../index.html',import.meta.url),'utf8');
+ const html=readFileSync(new URL('../expedition.html',import.meta.url),'utf8');
  assert.match(html,/id="topic-details"/);
  assert.match(html,/Skills in this chapter/);
  assert.doesNotMatch(html,/id="source-details"|id="source-detail"/);

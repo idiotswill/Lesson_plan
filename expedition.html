@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#111c2b">
+<meta name="description" content="A small learning adventure in an unfinished world. Sail, experiment, and make the lights come back.">
+<title>The Unfinished World · The Lantern Archipelago</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 60'%3E%3Crect width='60' height='60' rx='16' fill='%23152231'/%3E%3Cpath d='M12 40h36L39 49H22zM28 10v27H10zM33 17v20h16z' fill='%23eed9aa'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="teaching.css">
+<link rel="stylesheet" href="observatory.css">
+</head>
+<body>
+<a class="skip" href="#destinations">Skip to destinations</a>
+<header class="topbar">
+  <a class="brand" href="./" aria-label="Return to the shared harbour"><span class="brand-mark" aria-hidden="true">✧</span><span>← BACK TO THE HARBOUR<small>A little knowledge. A little wonder.</small></span></a>
+  <nav aria-label="Game tools"><button id="journal-button" class="quiet">Field journal</button><button id="calm-button" class="quiet" aria-pressed="false">Calm motion</button><button id="sound-button" class="quiet" aria-pressed="false">Sound off</button><button id="save-button" class="outlined">Save &amp; settings</button></nav>
+</header>
+<div id="storage-warning" class="warning" role="alert" hidden></div>
+<main>
+  <section class="chapter-heading"><div><p class="eyebrow">CHAPTER 01 <span> / </span> A FIRST EXPEDITION</p><h1>The Lantern Archipelago<span class="small-star">✦</span></h1><p>Somebody left this world unfinished. Let’s see what it can become.</p></div><div class="lantern-score"><span id="lantern-count">0 / 3</span><small>LANTERNS REKINDLED</small></div></section>
+  <div class="expedition">
+    <section class="map-panel" aria-label="Exploration map">
+      <div class="map-caption"><span class="live-dot"></span> THE SEA BETWEEN THINGS <span class="map-note">No hurry. The islands will wait.</span></div>
+      <canvas id="world" tabindex="0" aria-label="Sailing map. Click to sail, or use W A S D or arrow keys while focused. Enter visits a nearby island. The destination buttons below provide an alternative."></canvas>
+      <div class="map-foot"><span><kbd>W A S D</kbd> or click to sail · <kbd>Enter</kbd> to visit</span><span id="local-save-status">Saved on this device</span></div>
+      <div id="world-message" role="status">Your boat is made from a walnut. Your ambitions are considerably larger.</div>
+    </section>
+    <aside class="island-panel" aria-label="Selected destination"><p class="eyebrow" id="island-subject"></p><div class="island-symbol" id="island-symbol" aria-hidden="true"></div><h2 id="island-name"></h2><p id="island-intro"></p><div id="task-list"></div><div id="island-reward"></div><button id="ending-button" class="primary" hidden>Light the lighthouse ✧</button></aside>
+  </div>
+  <section id="destinations" class="destination-strip" aria-label="Choose a destination"></section>
+  <section class="po-map-entry" aria-label="Paper Observatory visitor workshop"><div><h2>The Paper Observatory · Visitor workshop</h2><p>Start with zero HTML. Build one page, follow your visitors, and keep what you make.</p></div><a href="paper-observatory.html">Enter the workshop →</a></section>
+  <footer><span>Chapter 01 · The Lantern Archipelago · v0.3.0</span><span>Three islands · Ten experiments · No AI subscription needed</span></footer>
+</main>
+<dialog id="mission" aria-labelledby="mission-title">
+  <div class="dialog-top"><div><p class="eyebrow" id="mission-subject"></p><h2 id="mission-title"></h2></div><button class="icon-button close-mission" aria-label="Close challenge">×</button></div>
+  <div class="modebar" role="group" aria-label="Challenge mode"><button id="adventure-mode" aria-pressed="true">In the world</button><button id="check-mode" aria-pressed="false">Without the scenery</button><span id="evidence-label"></span></div>
+  <div class="teaching-toolbar"><button id="tutorial-replay" class="outlined">Teach me step by step</button><small id="tutorial-status">Start here when the idea is new. No prior knowledge of this topic is assumed.</small></div>
+  <section id="guided-teaching" aria-label="Guided learning" hidden></section>
+  <div class="mission-layout">
+    <section class="lesson-copy"><p class="eyebrow" id="mission-term"></p><p id="mission-story"></p><div id="teach-box"><h3>The idea</h3><p id="mission-learn"></p><pre id="mission-example"></pre></div><div class="brief"><h3 id="brief-title">Your experiment</h3><p id="task-brief"></p></div><details id="topic-details"><summary>Skills in this chapter</summary><p id="topic-detail"></p></details><div class="hint-controls"><button id="hint-button" class="outlined">A little nudge</button><button id="solution-button" class="quiet">Show a worked solution</button></div><p id="hint-text" role="status"></p><pre id="solution-text" hidden></pre></section>
+    <section class="workbench" aria-label="Interactive challenge"><div id="work-area"></div><div class="actions"><button id="run-button" class="primary">Run experiment</button><button id="stop-button" class="outlined" hidden>Stop Python</button><button id="fresh-button" class="quiet">New variation</button><button id="download-work" class="quiet" hidden>Export my code</button></div><div id="feedback" role="status" aria-live="polite"></div><div id="result-details"></div><button id="next-button" class="primary" hidden>Continue the expedition →</button></section>
+  </div>
+</dialog>
+<dialog id="journal" aria-labelledby="journal-title"><div class="dialog-top"><div><p class="eyebrow">WHAT YOU CAN DO</p><h2 id="journal-title">The field journal</h2></div><button class="icon-button" data-close="journal" aria-label="Close journal">×</button></div><p>Lighting a lantern is progress in the game, not proof of mastery. Fresh checks use a separate problem without the scene or worked examples. Retry a check after at least 24 hours to collect later-check evidence. This is a practice log, not an exam prediction.</p><div id="journal-content"></div><p class="muted">Independent = no guided teaching, hints, revealed solution, or failed submissions on that fresh check. This cannot detect help outside the app. A later check is one piece of evidence, not a guarantee of retention.</p></dialog>
+<dialog id="settings" aria-labelledby="settings-title"><div class="dialog-top"><div><p class="eyebrow">YOUR EXPEDITION</p><h2 id="settings-title">Save &amp; settings</h2></div><button class="icon-button" data-close="settings" aria-label="Close settings">×</button></div><p>Progress and editor drafts are saved in this browser on this device. Export a backup before clearing browser data or moving computers. Imported saves replace the current session only after confirmation.</p><div class="settings-actions"><button id="export-button" class="primary">Export save</button><label class="outlined file-label">Import save<input type="file" id="import-file" accept=".json,application/json"></label><button id="reset-button" class="danger">Start a new expedition</button></div><p id="settings-message" role="status"></p><h3>Privacy &amp; connections</h3><p>Local single-player study desks. No analytics, accounts, AI calls or runtime downloads. Python uses the launcher’s local interpreter with a restricted introductory syntax set. Imports, attributes, files and network APIs are disabled. Run only your own code. Web previews disable scripts and remote resources.</p></dialog>
+<dialog id="welcome" aria-labelledby="welcome-title"><p class="eyebrow">YOU ARE NOT LATE. YOU HAVE JUST ARRIVED.</p><h2 id="welcome-title">A world with a few<br>pieces missing.</h2><p>A mechanical moth. Some unusually opinionated flowers. A sky with no labels.</p><p>Explore three islands and bring their lanterns back. Your experiments change what happens. Learn the rules, try a small step, and make the world a little brighter.</p><p class="muted">Each experiment begins with guided teaching: watch a demonstration, try a small step, then take over. No lives, streaks or penalty for needing help.</p><button id="begin-button" class="primary">Take the little boat →</button><small>Best on a computer · English explanations, Croatian terminology</small></dialog>
+<dialog id="ending" aria-labelledby="ending-title"><p class="eyebrow">CHAPTER ONE COMPLETE</p><h2 id="ending-title">Somebody left a light on.</h2><p>This time, it was you. Pip has already claimed the lighthouse as its bedroom.</p><p>The expedition is complete. Your learning continues: try the fresh checks in the field journal, revisit a difficult idea, or keep experimenting. Completing this chapter does not mean you have mastered every skill.</p><button class="primary" data-close="ending">Stay a little longer</button></dialog>
+<noscript>This game needs JavaScript. Enable it for this local page to play.</noscript>
+<script type="module" src="src/app.js"></script>
+</body>
+</html>

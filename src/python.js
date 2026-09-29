@@ -1,35 +1,23 @@
-/** Every submission gets a fresh worker: no globals leak between attempts. */
+/** Same runner interface, now using a disposable LOCAL CPython child. No CDN. */
 export class PythonRunner {
-  constructor(){this.worker=null;this.reject=null;this.timer=null;}
-  stop(){
-    clearTimeout(this.timer); this.worker?.terminate(); this.worker=null;
-    if(this.reject){const reject=this.reject;this.reject=null;reject(new Error('Run stopped. Your code and progress are safe.'));}
-  }
-  run(payload,onStatus=()=>{}){
-    this.stop();
-    return new Promise((resolve,reject)=>{
-      this.reject=reject;
-      const finish=(error,data)=>{
-        clearTimeout(this.timer); this.worker?.terminate(); this.worker=null;this.reject=null;
-        error?reject(error):resolve(data);
-      };
-      try { this.worker=new Worker(new URL('./python-worker.js',import.meta.url),{type:'module'}); }
-      catch(e){finish(new Error('Python workers are unavailable. Run the game through the local server or HTTPS. '+e.message));return;}
-      onStatus('Loading Python locally in your browser. The first download may take a moment…');
-      this.timer=setTimeout(()=>finish(new Error('Python did not load within 60 seconds. Check your internet connection or CDN permissions and retry.')),60000);
-      this.worker.onerror=()=>finish(new Error('Python could not start. Check internet access to cdn.jsdelivr.net, then try again.'));
-      this.worker.onmessage=({data})=>{
-        if(data.type==='ready'){
-          onStatus('Python ready. Running your program against the test inputs…');
-          this.worker.postMessage(payload);
-        }
-        if(data.type==='running'){
-          clearTimeout(this.timer);
-          this.timer=setTimeout(()=>finish(new Error('Execution stopped after 5 seconds. Check for an infinite loop.')),5000);
-        }
-        if(data.type==='result')finish(null,data.results);
-        if(data.type==='error'){const error=new Error(data.message);error.execution=data.phase==='execution';finish(error);}
-      };
-    });
+  constructor(){this.controller=null;this.generation=0;}
+  stop(){this.generation++;this.controller?.abort();this.controller=null;}
+  async run(payload,onStatus=()=>{}){
+    this.stop();const generation=this.generation,controller=new AbortController();this.controller=controller;
+    const timer=setTimeout(()=>controller.abort(),7000);
+    try{
+      onStatus('Running Python on this computer. Nothing is uploaded.');
+      const session=await fetch('/api/session',{signal:controller.signal,cache:'no-store'});
+      if(!session.ok)throw Error('Start the game with Start.cmd or Start.sh; the local Python launcher is required.');
+      const {token}=await session.json();
+      const response=await fetch('/api/python',{method:'POST',headers:{'Content-Type':'application/json','X-Game-Token':token},body:JSON.stringify(payload),signal:controller.signal});
+      const data=await response.json();
+      if(data.error||!response.ok){const error=Error(data.error||'Local Python could not run.');error.execution=true;throw error;}
+      if(generation!==this.generation)throw Error('Run stopped. Your draft is safe.');
+      return data.results;
+    }catch(error){
+      if(error.name==='AbortError')throw Error('Run stopped. The local child exits within four seconds. Your draft is safe.');
+      throw error;
+    }finally{clearTimeout(timer);if(generation===this.generation)this.controller=null;}
   }
 }

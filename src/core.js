@@ -1,3 +1,4 @@
+import {newHarbour,validateHarbour} from './harbour-state.js';
 import {newObservatory,validateObservatory} from './observatory-state.js';
 import { LESSONS, lessonById } from './content.js';
 const saveBases = new WeakMap();
@@ -8,7 +9,7 @@ export function random(seed) {
   return () => { a += 0x6D2B79F5; let t = a; t = Math.imul(t ^ t >>> 15, t | 1); t ^= t + Math.imul(t ^ t >>> 7, t | 61); return ((t ^ t >>> 14) >>> 0) / 4294967296; };
 }
 export function newSave() {
-  return { version:1, observatory:newObservatory(), seed:Math.floor(Math.random()*1e9), completed:[], evidence:[], drafts:{}, runs:{}, guides:{}, position:{x:.47,y:.66}, calm:false, ending:false };
+  return { version:1, harbour:newHarbour(), observatory:newObservatory(), seed:Math.floor(Math.random()*1e9), completed:[], evidence:[], drafts:{}, runs:{}, guides:{}, position:{x:.47,y:.66}, calm:false, ending:false };
 }
 /** Treat imported JSON as untrusted. Copy only known fields; never merge prototypes. */
 export function validateSave(raw) {
@@ -36,6 +37,7 @@ export function validateSave(raw) {
   if (Number.isFinite(raw.position?.x) && Number.isFinite(raw.position?.y)) out.position={x:Math.max(.04,Math.min(.96,raw.position.x)),y:Math.max(.06,Math.min(.94,raw.position.y))};
   out.calm=raw.calm===true; out.ending=raw.ending===true && out.completed.length===LESSONS.length;
   out.observatory=validateObservatory(raw.observatory);
+  out.harbour=validateHarbour(raw.harbour);
   return out;
 }
 export function parseSave(text) {
