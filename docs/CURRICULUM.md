@@ -1,3 +1,5 @@
+> Historical v0.2.1 record below. For the current connected harbour, local runtime, parallel tracks and test scope, see [CONNECTED_HARBOUR.md](CONNECTED_HARBOUR.md) and [QA.md](QA.md). The new foundational digital/computing models are not comprehensive verified subject coverage.
+
 # Skills and coverage — v0.2.1
 
 This is a compact introductory chapter with ten activities and guided teaching. It is not a complete learning programme or a validated mastery assessment.

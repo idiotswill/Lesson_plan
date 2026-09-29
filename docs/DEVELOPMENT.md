@@ -1,3 +1,5 @@
+> Historical v0.2.1 record below. For the current connected harbour, local runtime, parallel tracks and test scope, see [CONNECTED_HARBOUR.md](CONNECTED_HARBOUR.md) and [QA.md](QA.md). The new foundational digital/computing models are not comprehensive verified subject coverage.
+
 # Development
 
 ## Structure

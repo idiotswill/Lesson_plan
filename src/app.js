@@ -119,7 +119,7 @@ function renderPython(){
   let brief=lesson.id==='py-energy'?`Inputs: pods and leak. Each pod contributes ${rate} units. Assign the remaining amount to energy.`:lesson.id==='py-decision'?'Inputs: wind, limit, charged. Assign True to fly only when charged is True and wind < limit; False otherwise.':'Input: stops (a non-negative integer). Use a while or for loop to assign the sum of 1 through stops to charge. For stops = 0, charge must be 0.';
   $('task-brief').textContent=brief+' The same program is tested with several inputs; do not overwrite the supplied inputs.';
   const stage=mode==='adventure'?'<div class="pip-stage"><div class="orchard-lights">'+Array.from({length:6},()=>'<span></span>').join('')+'</div><div class="pip"></div><small id="pip-caption">Pip is waiting to see what your program does.</small></div>':'';
-  $('work-area').innerHTML=`<div class="input-line">First test inputs: ${escape(Object.entries(first).map(([name,value])=>name+' = '+pythonLiteral(value)).join(' · '))}</div>${stage}<label class="editor-label" for="code-editor">PYTHON 3 · Ctrl/⌘ + Enter to run · Tab inserts 4 spaces</label><textarea id="code-editor" spellcheck="false" autocomplete="off" autocapitalize="off" maxlength="18000"></textarea><p class="muted" style="font-size:10px;margin:8px 0">Real Python, not a simulated parser. First run downloads the runtime. Never paste untrusted code.</p>`;
+  $('work-area').innerHTML=`<div class="input-line">First test inputs: ${escape(Object.entries(first).map(([name,value])=>name+' = '+pythonLiteral(value)).join(' · '))}</div>${stage}<label class="editor-label" for="code-editor">PYTHON 3 · Ctrl/⌘ + Enter to run · Tab inserts 4 spaces</label><textarea id="code-editor" spellcheck="false" autocomplete="off" autocapitalize="off" maxlength="18000"></textarea><p class="muted" style="font-size:10px;margin:8px 0">Real local Python with a restricted beginner feature set. No runtime download. Run only your own code.</p>`;
   $('code-editor').value=initialDraft()??(mode==='check'?`# Output variable: ${lesson.output}\n`:lesson.starter.replace('worth 3','worth '+rate));
   $('code-editor').oninput=draft;codeEditor('code-editor');
 }
@@ -228,3 +228,6 @@ document.querySelectorAll('[data-close]').forEach(b=>b.onclick=()=>$(b.dataset.c
 $('begin-button').onclick=()=>{$('welcome').close();$('world').focus();};
 if(!state.completed.length&&!state.evidence.length)$('welcome').showModal();
 // Nothing is exposed as a mutation/debug API. Browser tests exercise the actual UI.
+
+// External module listener also works under the local launcher CSP.
+window.addEventListener("pageshow",event=>{if(event.persisted)location.reload();});

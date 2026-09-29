@@ -1,5 +1,5 @@
-"""Independent CPython checks for worked teaching traces and real grading harness.
-Does NOT test Pyodide/CDN/browser worker. No network or third-party dependencies.
+"""Independent CPython checks for worked teaching traces and bounded local grading harness.
+Uses the active local Python implementation; browser transport is tested separately. No network or third-party dependencies.
 """
 from pathlib import Path
 import json
@@ -8,12 +8,13 @@ import sys
 import unittest
 ROOT=Path(__file__).resolve().parents[1]
 GUIDES=json.loads(subprocess.check_output(['node','--input-type=module','-e',"import {GUIDES} from './src/teaching-content.js'; console.log(JSON.stringify(GUIDES));"],cwd=ROOT))
-HARNESS=(ROOT/'src/python-worker.js').read_text().split('const HARNESS=String.raw`',1)[1].split('`;',1)[0]
-EXECUTABLE=HARNESS.rsplit('json.dumps(results, allow_nan=False)',1)[0]
+sys.path.insert(0,str(ROOT))
+from local_python import run as local_run
 def grade(code,output,inputs,loop=False):
-    ns={'__payload_json':json.dumps({'code':code,'output':output,'cases':inputs,'requiresLoop':loop})}
-    exec(EXECUTABLE,ns,ns)
-    return ns['results']
+    results=[]
+    for start in range(0,len(inputs),20):
+        results.extend(local_run({'code':code,'output':output,'cases':inputs[start:start+20],'requiresLoop':loop}))
+    return results
 class WorkedExamples(unittest.TestCase):
     def test_all_demonstrated_python_frames_match_actual_execution(self):
         demos=0
