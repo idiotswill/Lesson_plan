@@ -9,6 +9,7 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 60'%3E%3Crect width='60' height='60' rx='16' fill='%23152231'/%3E%3Cpath d='M12 40h36L39 49H22zM28 10v27H10zM33 17v20h16z' fill='%23eed9aa'/%3E%3C/svg%3E">
 <link rel="stylesheet" href="styles.css">
 <link rel="stylesheet" href="teaching.css">
+<link rel="stylesheet" href="observatory.css">
 </head>
 <body>
 <a class="skip" href="#destinations">Skip to destinations</a>
@@ -29,6 +30,7 @@
     <aside class="island-panel" aria-label="Selected destination"><p class="eyebrow" id="island-subject"></p><div class="island-symbol" id="island-symbol" aria-hidden="true"></div><h2 id="island-name"></h2><p id="island-intro"></p><div id="task-list"></div><div id="island-reward"></div><button id="ending-button" class="primary" hidden>Light the lighthouse ✧</button></aside>
   </div>
   <section id="destinations" class="destination-strip" aria-label="Choose a destination"></section>
+  <section class="po-map-entry" aria-label="Paper Observatory visitor workshop"><div><h2>The Paper Observatory · Visitor workshop</h2><p>Start with zero HTML. Build one page, follow your visitors, and keep what you make.</p></div><a href="paper-observatory.html">Enter the workshop →</a></section>
   <footer><span>Chapter 01 · The Lantern Archipelago · v0.2.1</span><span>Three islands · Ten experiments · No AI subscription needed</span></footer>
 </main>
 <dialog id="mission" aria-labelledby="mission-title">
@@ -47,5 +49,6 @@
 <dialog id="ending" aria-labelledby="ending-title"><p class="eyebrow">CHAPTER ONE COMPLETE</p><h2 id="ending-title">Somebody left a light on.</h2><p>This time, it was you. Pip has already claimed the lighthouse as its bedroom.</p><p>The expedition is complete. Your learning continues: try the fresh checks in the field journal, revisit a difficult idea, or keep experimenting. Completing this chapter does not mean you have mastered every skill.</p><button class="primary" data-close="ending">Stay a little longer</button></dialog>
 <noscript>This game needs JavaScript. Enable it for this local page to play.</noscript>
 <script type="module" src="src/app.js"></script>
+<script>window.addEventListener("pageshow",event=>{if(event.persisted)location.reload();});</script>
 </body>
 </html>

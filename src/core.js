@@ -1,4 +1,6 @@
+import {newObservatory,validateObservatory} from './observatory-state.js';
 import { LESSONS, lessonById } from './content.js';
+const saveBases = new WeakMap();
 export const SAVE_KEY = 'unfinished-world.v1';
 export const DAY = 86400000;
 export function random(seed) {
@@ -6,7 +8,7 @@ export function random(seed) {
   return () => { a += 0x6D2B79F5; let t = a; t = Math.imul(t ^ t >>> 15, t | 1); t ^= t + Math.imul(t ^ t >>> 7, t | 61); return ((t ^ t >>> 14) >>> 0) / 4294967296; };
 }
 export function newSave() {
-  return { version:1, seed:Math.floor(Math.random()*1e9), completed:[], evidence:[], drafts:{}, runs:{}, guides:{}, position:{x:.47,y:.66}, calm:false, ending:false };
+  return { version:1, observatory:newObservatory(), seed:Math.floor(Math.random()*1e9), completed:[], evidence:[], drafts:{}, runs:{}, guides:{}, position:{x:.47,y:.66}, calm:false, ending:false };
 }
 /** Treat imported JSON as untrusted. Copy only known fields; never merge prototypes. */
 export function validateSave(raw) {
@@ -33,6 +35,7 @@ export function validateSave(raw) {
   }
   if (Number.isFinite(raw.position?.x) && Number.isFinite(raw.position?.y)) out.position={x:Math.max(.04,Math.min(.96,raw.position.x)),y:Math.max(.06,Math.min(.94,raw.position.y))};
   out.calm=raw.calm===true; out.ending=raw.ending===true && out.completed.length===LESSONS.length;
+  out.observatory=validateObservatory(raw.observatory);
   return out;
 }
 export function parseSave(text) {
@@ -40,10 +43,17 @@ export function parseSave(text) {
   try { return validateSave(JSON.parse(text)); } catch(e) { throw new Error(e instanceof SyntaxError ? 'That file is not valid JSON. Your current game is unchanged.' : e.message); }
 }
 export function loadSave(storage) {
-  try { const text=storage.getItem(SAVE_KEY); return {state:text ? parseSave(text) : newSave(), warning:''}; }
+  try { const text=storage.getItem(SAVE_KEY), state=text ? parseSave(text) : newSave(); saveBases.set(state,text); return {state,warning:''}; }
   catch(e) { return {state:newSave(),warning:'The stored save could not be read. It has NOT been overwritten. Export this session before leaving. '+e.message,blocked:true}; }
 }
-export function persist(state,storage) { try { storage.setItem(SAVE_KEY,JSON.stringify(state)); return ''; } catch { return 'Browser storage is unavailable or full. Progress is in memory only; use Export save.'; } }
+export function persist(state,storage) {
+  try {
+    // A restored Back/Forward page or another tab must not overwrite newer work.
+    if(saveBases.has(state) && storage.getItem(SAVE_KEY)!==saveBases.get(state))
+      return 'A newer save exists in another page or tab. This session was NOT written. Export this session if needed, then reload to load the newer save.';
+    const text=JSON.stringify(state); storage.setItem(SAVE_KEY,text); saveBases.set(state,text); return '';
+  } catch { return 'Browser storage is unavailable or full. Progress is in memory only; use Export save.'; }
+}
 export function runState(state,id,mode) {
   const key=id+':'+mode;
   return state.runs[key] ??= {variant:0,hints:0,attempts:0};
